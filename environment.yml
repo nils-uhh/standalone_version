@@ -1,0 +1,11 @@
+# Create with:  mamba env create -f environment.yml
+name: gfw
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.9
+  - numpy>=1.23
+  - scipy>=1.9
+  - matplotlib>=3.4
+  - meshio>=5.3
+  - pytest>=7.0

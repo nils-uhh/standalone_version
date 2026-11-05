@@ -1,0 +1,22 @@
+[
+  "tests/test_gfw.py::test_alpha_max_gives_zero[greens_function]",
+  "tests/test_gfw.py::test_alpha_max_gives_zero[identity]",
+  "tests/test_gfw.py::test_alpha_max_gives_zero[truncated_pinv]",
+  "tests/test_gfw.py::test_bcd_warm_start_recomputes_residual",
+  "tests/test_gfw.py::test_fista_is_the_default",
+  "tests/test_gfw.py::test_gap_matches_groupsparsity",
+  "tests/test_gfw.py::test_input_data_structure",
+  "tests/test_gfw.py::test_morozov_hits_target[bcd]",
+  "tests/test_gfw.py::test_morozov_hits_target[fista]",
+  "tests/test_gfw.py::test_morozov_warns_if_target_unreachable",
+  "tests/test_gfw.py::test_no_imports_from_the_rest_of_the_repo",
+  "tests/test_gfw.py::test_pinv_rank_reduction",
+  "tests/test_gfw.py::test_simulation_is_off_grid_and_multi_source",
+  "tests/test_gfw.py::test_solvers_agree[greens_function]",
+  "tests/test_gfw.py::test_solvers_agree[identity]",
+  "tests/test_gfw.py::test_solvers_agree[truncated_pinv]",
+  "tests/test_gfw.py::test_warm_start_from_solution_stays_there[bcd]",
+  "tests/test_gfw.py::test_warm_start_from_solution_stays_there[fista]",
+  "tests/test_gfw.py::test_warm_start_to_larger_alpha_is_solved[bcd]",
+  "tests/test_gfw.py::test_warm_start_to_larger_alpha_is_solved[fista]"
+]
