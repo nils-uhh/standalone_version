@@ -47,7 +47,7 @@ def _draw_sources(rng, sim, n_sources, min_separation):
 
 
 
-def add_Noise(potential):       # to be edited 
+def add_noise(potential):       # to be edited 
     mittel = 1       # Mittelwert der Normalverteilung
     sigma = 1        # Standardabweichung
     # Herausfinden was gute Werte sind!
