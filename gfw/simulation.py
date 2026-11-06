@@ -21,17 +21,18 @@ def simulate(sim, n_sources=1, orientation="normal", min_separation=0.0, moments
     rng = np.random.default_rng(seed)
     if indices is None:
         indices = _draw_sources(rng, sim, n_sources, min_separation)
-    indices = np.asarray(indices)
+    indices = np.asarray(indices) # n lang 
     if moments is None:
         if orientation == "normal":
             moments = sim.normals[indices].copy()
         elif orientation == "random":
-            moments = rng.normal(size=(len(indices), 3))
+            moments = rng.normal(size=(len(indices), 3))    # (n,3)
             moments /= np.linalg.norm(moments, axis=1, keepdims=True)
         else:
             raise ValueError(f"Unknown orientation '{orientation}'. Use 'normal' or 'random'.")
     moments = np.asarray(moments)
     potential = sum(sim.leadfield[:, 3 * i:3 * i + 3] @ q for i, q in zip(indices, moments))
+    #                                                 3x1    
     return potential, indices, moments
 
 
@@ -46,5 +47,11 @@ def _draw_sources(rng, sim, n_sources, min_separation):
 
 
 
-def add_Noise(potential):
-    return 
+def add_Noise(potential):       # to be edited 
+    mittel = 1       # Mittelwert der Normalverteilung
+    sigma = 1        # Standardabweichung
+    # Herausfinden was gute Werte sind!
+    noise = np.random.normal(mittel , sigma, size=potential.shape)
+    noised_potential = potential + noise
+    return noised_potential
+
