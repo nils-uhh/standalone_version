@@ -6,6 +6,10 @@
 
 Writes a figure and a .vtu file for ParaView to the output folder.
 """
+
+# Nachbauen zum solven der Simulationen
+# notizen auf zettel
+
 import argparse
 import sys
 from pathlib import Path
@@ -36,8 +40,8 @@ def main():
     W = gfw.WEIGHTINGS[args.weighting](L)
 
     d, indices, moments = gfw.simulate(simulation, n_sources=args.n_sources, min_separation=30.0, seed=args.seed)
-    alpha = args.alpha_rel * gfw.alpha_max(L, W, d)
-    x = gfw.solve(L, W, d, alpha, solver=args.solver)
+    alpha = args.alpha_rel * gfw.alpha_max(L, W, d)         # dann auch nicht mehr gebraucht, da morozov alpha bestimmt??
+    x = gfw.solve(L, W, d, alpha, solver=args.solver)       # ersetzen durch morozov, braucht noise - siehe datei
 
     true_positions = simulation.positions[indices]
     print(f"weighting {args.weighting}, solver {args.solver}, alpha {alpha:.3e}")
