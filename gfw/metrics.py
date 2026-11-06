@@ -1,5 +1,5 @@
 """Evaluation of a reconstruction against the simulated sources."""
-import numpy as np
+import numpy as np              
 from scipy.optimize import linear_sum_assignment
 
 

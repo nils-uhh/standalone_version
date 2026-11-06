@@ -43,3 +43,8 @@ def _draw_sources(rng, sim, n_sources, min_separation):
         if len(chosen) == n_sources:
             return np.array(chosen)
     raise ValueError(f"Could not place {n_sources} sources {min_separation} mm apart.")
+
+
+
+def add_Noise(potential):
+    return 
