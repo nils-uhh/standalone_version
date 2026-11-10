@@ -1,10 +1,29 @@
 """Noise-free forward simulation on the finer simulation source space."""
 import numpy as np
+import math as m
 
 
 def average_reference(potential):
     """Subtract the mean over sensors; the leadfields are average-referenced."""
     return potential - potential.mean(axis=-1, keepdims=True)
+
+ 
+def add_noise(potential):       # to be edited 
+    mittel = 0       # Mittelwert der Normalverteilung
+    sigma = 1       # Standardabweichung
+    # Herausfinden was gute Werte sind!
+    noise = np.random.normal(mittel , sigma, size=potential.shape)
+    noised_potential = potential + noise
+    print(noised_potential)
+    print()
+    return noised_potential
+
+def find_target(potential):
+    sigma = 1 
+    target = m.sqrt(len(potential)) * sigma
+    print("Das target ist",target)
+    print()
+    return target
 
 
 def simulate(sim, n_sources=1, orientation="normal", min_separation=0.0, moments=None, indices=None, seed=0):
@@ -32,8 +51,10 @@ def simulate(sim, n_sources=1, orientation="normal", min_separation=0.0, moments
             raise ValueError(f"Unknown orientation '{orientation}'. Use 'normal' or 'random'.")
     moments = np.asarray(moments)
     potential = sum(sim.leadfield[:, 3 * i:3 * i + 3] @ q for i, q in zip(indices, moments))
-    #                                                 3x1    
-    return potential, indices, moments
+    #    liegt in R^79                                 3x1    
+    print(potential)
+    print()
+    return add_noise(potential), indices, moments
 
 
 def _draw_sources(rng, sim, n_sources, min_separation):
@@ -44,14 +65,3 @@ def _draw_sources(rng, sim, n_sources, min_separation):
         if len(chosen) == n_sources:
             return np.array(chosen)
     raise ValueError(f"Could not place {n_sources} sources {min_separation} mm apart.")
-
-
-
-def add_noise(potential):       # to be edited 
-    mittel = 1       # Mittelwert der Normalverteilung
-    sigma = 1        # Standardabweichung
-    # Herausfinden was gute Werte sind!
-    noise = np.random.normal(mittel , sigma, size=potential.shape)
-    noised_potential = potential + noise
-    return noised_potential
-
