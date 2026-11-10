@@ -10,19 +10,19 @@ def average_reference(potential):
  
 def add_noise(potential):       # to be edited 
     mittel = 0       # Mittelwert der Normalverteilung
-    sigma = 1       # Standardabweichung
+    sigma = 0.1        # Standardabweichung
     # Herausfinden was gute Werte sind!
     noise = np.random.normal(mittel , sigma, size=potential.shape)
     noised_potential = potential + noise
-    print(noised_potential)
-    print()
+    #print(noised_potential)
+    #print()
     return noised_potential
 
 def find_target(potential):
-    sigma = 1 
+    sigma = 0.1
     target = m.sqrt(len(potential)) * sigma
-    print("Das target ist",target)
-    print()
+    #print("Das target ist",target)
+    #print()
     return target
 
 
@@ -52,8 +52,8 @@ def simulate(sim, n_sources=1, orientation="normal", min_separation=0.0, moments
     moments = np.asarray(moments)
     potential = sum(sim.leadfield[:, 3 * i:3 * i + 3] @ q for i, q in zip(indices, moments))
     #    liegt in R^79                                 3x1    
-    print(potential)
-    print()
+    #print(potential)
+    #print()
     return add_noise(potential), indices, moments
 
 

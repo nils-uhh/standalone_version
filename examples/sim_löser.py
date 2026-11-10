@@ -50,20 +50,20 @@ def main():
     print(f"relative residual {np.linalg.norm(L @ x - d) / np.linalg.norm(d):.2e}")
     print(gfw.source_metrics(x, problem.positions, true_positions))
 
-    OUTPUT_DIR.mkdir(exist_ok=True)
-    stem = f"reconstruction_{args.weighting}_{args.solver}_{args.n_sources}src"
-    moments_x = x.reshape(-1, 3)
-    save_points_to_vtu_file(
-        problem.positions, OUTPUT_DIR / f"{stem}.vtu",
-        scalar_data={"amplitude": np.linalg.norm(moments_x, axis=1)},
-        vector_data={"moment": moments_x},
-    )
-    for surface in ("head", "cortex"):
-        save_surface_to_vtu_file(*gfw.load_surface(surface), OUTPUT_DIR / f"{surface}_surface.vtu")
-    np.savez(OUTPUT_DIR / f"{stem}.npz", x=x, alpha=alpha, true_positions=true_positions, true_moments=moments)
-    plot_reconstruction(x, problem.positions, true_positions, OUTPUT_DIR / f"{stem}.png", head=gfw.load_surface("head"),
-                        title=f"{args.weighting}, {args.solver}, alpha = {alpha:.2e}")
-    print(f"Wrote {OUTPUT_DIR / stem}.vtu, .npz and .png, and the head and cortex surfaces as .vtu")
+    #OUTPUT_DIR.mkdir(exist_ok=True)
+    #stem = f"reconstruction_{args.weighting}_{args.solver}_{args.n_sources}src"
+    #moments_x = x.reshape(-1, 3)
+   # save_points_to_vtu_file(
+   #     problem.positions, OUTPUT_DIR / f"{stem}.vtu",
+   #     scalar_data={"amplitude": np.linalg.norm(moments_x, axis=1)},
+   #     vector_data={"moment": moments_x},
+   # )
+   # for surface in ("head", "cortex"):
+  #      save_surface_to_vtu_file(*gfw.load_surface(surface), OUTPUT_DIR / f"{surface}_surface.vtu")
+   # np.savez(OUTPUT_DIR / f"{stem}.npz", x=x, alpha=alpha, true_positions=true_positions, true_moments=moments)
+   # plot_reconstruction(x, problem.positions, true_positions, OUTPUT_DIR / f"{stem}.png", head=gfw.load_surface("head"),
+   #                     title=f"{args.weighting}, {args.solver}, alpha = {alpha:.2e}")
+   # print(f"Wrote {OUTPUT_DIR / stem}.vtu, .npz and .png, and the head and cortex surfaces as .vtu")
 
 
 if __name__ == "__main__":

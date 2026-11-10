@@ -42,3 +42,19 @@ def source_metrics(x, positions, true_positions, active_threshold=0.1):
         "n_active": int(np.sum(amplitude > active_threshold * amplitude.max())) if amplitude.max() > 0 else 0,
         "n_nonzero": int(np.sum(amplitude > 0)),
     }
+
+
+# kopiert von oben, aber für rep
+
+def source_metrics_rep(x, positions, true_positions, active_threshold=0.1):
+    """Summary of a reconstruction: localization error and number of active sources."""
+    amplitude = np.linalg.norm(np.asarray(x).reshape(-1, 3), axis=1)
+    errors = localization_errors(x, positions, true_positions)
+    if np.any(~np.isnan(errors)):
+        loc_mean_error = float(np.nanmean(errors))
+        loc_max_error = float(np.nanmax(errors))
+    else:
+        loc_mean_error = np.nan
+        loc_max_error = np.nan
+
+    return loc_mean_error, loc_max_error
