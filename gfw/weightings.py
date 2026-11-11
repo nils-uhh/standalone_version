@@ -61,9 +61,12 @@ def combined_weights_exp(L, rank_reduction=1, k=None):      # Rechenlastige Inte
 # only green auch gut aber regelmäßig große ausreißer, ist aber am genausten
 
 
-
-
 def combined_weights_cheap():
+
+
+
+
+    
     return
 
 

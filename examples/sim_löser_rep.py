@@ -50,7 +50,7 @@ def main():
                                                     #       "combined_cheap": combined_weights_cheap,
 
 
-        d, indices, moments = gfw.simulate(simulation, n_sources=1, min_separation=30.0, seed=args.seed) # n = 1,2,3
+        d, indices, moments = gfw.simulate(simulation, n_sources=2, min_separation=30.0, seed=args.seed) # n = 1,2,3
         target = gfw.simulation.find_target(d)
         x,alpha = gfw.morozov(L, W, d, target)      
         true_positions = simulation.positions[indices]
