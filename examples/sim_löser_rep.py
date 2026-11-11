@@ -3,7 +3,7 @@
 
     python examples/01_single_reconstruction.py
     python examples/01_single_reconstruction.py --n-sources 3 --weighting truncated_pinv
-
+s
 Writes a figure and a .vtu file for ParaView to the output folder.
 """
 
@@ -44,17 +44,15 @@ def main():
         problem = gfw.load_problem()
         simulation = gfw.load_simulation_space()
         L = problem.leadfield
-        W = gfw.WEIGHTINGS[args.weighting](L)
+        W = gfw.WEIGHTINGS["truncated_pinv"](L)     #       "greens_function": weights_gamma,
+                                                    #       "truncated_pinv": weights_pinv,
+                                                    #       "combined_expensive": combined_weights_exp,
+                                                    #       "combined_cheap": combined_weights_cheap,
+
 
         d, indices, moments = gfw.simulate(simulation, n_sources=1, min_separation=30.0, seed=args.seed) # n = 1,2,3
-        # alpha = args.alpha_rel * gfw.alpha_max(L, W, d)         # dann auch nicht mehr gebraucht, da morozov alpha bestimmt??
-
         target = gfw.simulation.find_target(d)
-        #print("Target ist: ",target)
-        x,alpha = gfw.morozov(L, W, d, target)       # ersetzen durch morozov, braucht noise - siehe datei
-        #print()
-
-
+        x,alpha = gfw.morozov(L, W, d, target)      
         true_positions = simulation.positions[indices]
         speicher = gfw.metrics.source_metrics_rep(x, problem.positions, true_positions)
 
@@ -74,6 +72,8 @@ def main():
             smallest_2 = speicher[0]
         elif speicher[0] < smallest_3:
             smallest_3 = speicher[0]
+        else:   
+            pass
 
         mean_error_sum = mean_error_sum + speicher[0]
         max_error_sum = max_error_sum + speicher[1]

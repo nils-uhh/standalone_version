@@ -19,7 +19,7 @@ def weights_identity(L):
     return np.broadcast_to(np.eye(3), (m, 3, 3)).copy()
 
 
-def weights_gamma(L):
+def weights_gamma(L):       # Green weighting
     """W_g = L_g^T L_g: the Green's function weighting."""
     Lg = groups_of(L)
     return np.einsum("gai,gaj->gij", Lg, Lg)
@@ -30,7 +30,7 @@ def numerical_rank(L, rtol=1e-10):
     return int(np.sum(s > rtol * s[0]))
 
 
-def weights_pinv(L, rank_reduction=1, k=None):
+def weights_pinv(L, rank_reduction=1, k=None):      # Projection weighting
     """W_g = (L_k^+ L)_g^T (L_k^+ L)_g: the truncated pseudo-inverse weighting.
 
     The rank used is k = numerical_rank(L) - rank_reduction, unless k is given.
@@ -49,8 +49,28 @@ def weights_pinv(L, rank_reduction=1, k=None):
     return np.einsum("gik,gjk->gij", Vk, Vk)
 
 
+def combined_weights_exp(L, rank_reduction=1, k=None):      # Rechenlastige Interpolation bei vielen Quellen
+    green = weights_gamma(L)
+    proj = weights_pinv(L, rank_reduction=1, k=None)
+    green_genormt = green / np.linalg.norm(green, ord="fro", axis=(-1,-2),keepdims=True)
+    proj_genormt = proj / np.linalg.norm(proj,ord="fro", axis=(-1,-2),keepdims=True)
+    delta = 0.75 # delta in intervall [0,1]   # 0,25 / 0,5 / 0,75  
+    return (1.0-delta) * green_genormt + delta * proj_genormt
+
+# d = 0,75 ziemlich gut, am konstantesten 
+# only green auch gut aber regelmäßig große ausreißer, ist aber am genausten
+
+
+
+
+def combined_weights_cheap():
+    return
+
+
 WEIGHTINGS = {
     "identity": weights_identity,
     "greens_function": weights_gamma,
     "truncated_pinv": weights_pinv,
+    "combined_expensive": combined_weights_exp,
+    "combined_cheap": combined_weights_cheap,
 }
