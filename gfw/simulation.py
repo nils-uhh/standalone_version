@@ -10,7 +10,7 @@ def average_reference(potential):
  
 def add_noise(potential):       # to be edited 
     mittel = 0      # Mittelwert der Normalverteilung
-    sigma = 0.005        # Standardabweichung
+    sigma = 0.001       # Standardabweichung
     # Herausfinden was gute Werte sind!
     noise = np.random.normal(mittel , sigma, size=potential.shape)
     noised_potential = potential + noise
@@ -19,7 +19,7 @@ def add_noise(potential):       # to be edited
     return noised_potential
 
 def find_target(potential):
-    sigma = 0.005
+    sigma = 0.001
     target = m.sqrt(len(potential)) * sigma
     #print("Das target ist",target)
     #print()

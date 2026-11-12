@@ -20,8 +20,9 @@ from gfw.data import OUTPUT_DIR
 from gfw.plotting import plot_reconstruction
 from gfw.vtu_utils import save_points_to_vtu_file, save_surface_to_vtu_file
 
-k = 100 # wie viele durchgänge von simulationen 
+k = 10 # wie viele durchgänge von simulationen 
 def main():
+    # Startwerte zur Abspeicherung der größten und kleinsten mean/max loc error
     biggest_1 = 0
     biggest_2 = 0
     biggest_3 = 0
@@ -30,6 +31,7 @@ def main():
     smallest_3 = 500
     mean_error_sum = 0
     max_error_sum = 0
+    
     for i in range(k):
     
         parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -44,13 +46,13 @@ def main():
         problem = gfw.load_problem()
         simulation = gfw.load_simulation_space()
         L = problem.leadfield
-        W = gfw.WEIGHTINGS["truncated_pinv"](L)     #       "greens_function": weights_gamma,
+        W = gfw.WEIGHTINGS["combined_cheap"](L)     #       "greens_function": weights_gamma,
                                                     #       "truncated_pinv": weights_pinv,
                                                     #       "combined_expensive": combined_weights_exp,
                                                     #       "combined_cheap": combined_weights_cheap,
 
 
-        d, indices, moments = gfw.simulate(simulation, n_sources=2, min_separation=30.0, seed=args.seed) # n = 1,2,3
+        d, indices, moments = gfw.simulate(simulation, n_sources=1, min_separation=30.0, seed=args.seed) # n = 1,2,3
         target = gfw.simulation.find_target(d)
         x,alpha = gfw.morozov(L, W, d, target)      
         true_positions = simulation.positions[indices]

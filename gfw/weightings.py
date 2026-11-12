@@ -54,20 +54,57 @@ def combined_weights_exp(L, rank_reduction=1, k=None):      # Rechenlastige Inte
     proj = weights_pinv(L, rank_reduction=1, k=None)
     green_genormt = green / np.linalg.norm(green, ord="fro", axis=(-1,-2),keepdims=True)
     proj_genormt = proj / np.linalg.norm(proj,ord="fro", axis=(-1,-2),keepdims=True)
-    delta = 0.75 # delta in intervall [0,1]   # 0,25 / 0,5 / 0,75  
+    delta = 0.5 # delta in intervall [0,1]   # 0,25 / 0,5 / 0,75  
     return (1.0-delta) * green_genormt + delta * proj_genormt
 
 # d = 0,75 ziemlich gut, am konstantesten 
 # only green auch gut aber regelmäßig große ausreißer, ist aber am genausten
 
 
-def combined_weights_cheap():
+def get_alpha_scaled_by_svd(L):     # mit KI gemacht 
+    # Get scaled alpha based on SVD
 
-
-
-
+    s = np.linalg.svd(L, compute_uv=False)
     
-    return
+    # 2. Der größte Singulärwert (sigma_max)
+    sigma_max = s[0]
+    
+    # 3. Referenzskala für die Eigenwerte von LL^T (sigma_max^2)
+    lambda_max = sigma_max ** 2
+    
+    # 4. alpha skalieren (z. B. 1% oder 10% des Maximums als Ausgangspunkt)
+    scale_factor = 1        # wie stark lambda_max skalieren, hierbei ausprobieren oder clever wählen
+    alpha = scale_factor * lambda_max
+    
+    return alpha
+
+
+def combined_weights_cheap(L):     # mit KI gemacht
+    # Push-Through-Identität aus PDF-Datei
+    # Lohnt sich rechentechnisch nur wenn Anzahl der Quellen >> Anzahl Sensoren, dann invertierbarkeit der Matrix schneller
+    alpha = get_alpha_scaled_by_svd(L) # [0,inf) Gewichtung 0: Proj , inf: Green
+    N, num_cols = L.shape
+    m = num_cols // 3
+        
+    LLt = L @ L.T
+
+    I_N = np.eye(N)
+    inv_term = np.linalg.solve(LLt + alpha * I_N, L)    # zu invertierender Term * L
+    
+    W = np.zeros((m, 3, 3))
+
+    L_groups = L.reshape(N, m, 3)          # Form: (N, m, 3)
+    inv_term_groups = inv_term.reshape(N, m, 3) # Form: (N, m, 3)
+    
+    for g in range(m):
+        L_g = L_groups[:, g, :]          # Spalten für Quelle g: Form (N, 3)
+        inv_g = inv_term_groups[:, g, :] # Entsprechender inverser Teil: Form (N, 3)
+        
+        # Gleichung (9): W_g = (1 + alpha) * L_g^T * (LL^T + alpha * I)^(-1) * L_g[cite: 2]
+        W[g] = (1.0 + alpha) * (L_g.T @ inv_g)
+        
+    return W
+    
 
 
 WEIGHTINGS = {
