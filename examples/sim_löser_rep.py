@@ -20,7 +20,7 @@ from gfw.data import OUTPUT_DIR
 from gfw.plotting import plot_reconstruction
 from gfw.vtu_utils import save_points_to_vtu_file, save_surface_to_vtu_file
 
-k = 10 # wie viele durchgänge von simulationen 
+k = 100 # wie viele durchgänge von simulationen 
 def main():
     # Startwerte zur Abspeicherung der größten und kleinsten mean/max loc error
     biggest_1 = 0
@@ -31,6 +31,7 @@ def main():
     smallest_3 = 500
     mean_error_sum = 0
     max_error_sum = 0
+    safe = np.array([])
     
     for i in range(k):
     
@@ -46,7 +47,7 @@ def main():
         problem = gfw.load_problem()
         simulation = gfw.load_simulation_space()
         L = problem.leadfield
-        W = gfw.WEIGHTINGS["combined_cheap"](L)     #       "greens_function": weights_gamma,
+        W = gfw.WEIGHTINGS["combined_expensive"](L)     #       "greens_function": weights_gamma,
                                                     #       "truncated_pinv": weights_pinv,
                                                     #       "combined_expensive": combined_weights_exp,
                                                     #       "combined_cheap": combined_weights_cheap,
@@ -81,7 +82,25 @@ def main():
         max_error_sum = max_error_sum + speicher[1]
 
 
+        # speichert den aktuellen durchlauf in datei zum plotten nachher
+        # ist es vlt sinnvoller in eine datei alle verschiedenen deltas zu speichern? 
+
+        safe.append(speicher[0])
         print(i+1 , "ter Durchgang")
+
+
+    # speichert Ergebnisse als npz 
+    delta =  gfw.get_delta()
+    snr = gfw.get_snr() # to be created in "simulation.py"
+    dateiname = f"run_delta:{delta}_SNR:{snr}.npz"
+
+    aktueller_ordner = Path(__file__).resolve().parent
+    projekt_hauptordner = aktueller_ordner.parent
+    # für jedes delta ncohmal eigenen unterordner, dann ist einfacher
+    # darauf zuzugreifen für den plot und übersichtlicher
+    dateipfad = projekt_hauptordner / "Ergebnisse_sim_rep" / dateiname 
+    np.savez(dateipfad, daten=safe)
+
 
     print("Biggest mean_loc_error:",round(biggest_1,5), ",",round(biggest_2,5), ",",round(biggest_3,5))
     print("Smallest mean_loc_error:",round(smallest_1,5),",",round(smallest_2,5),",",round(smallest_3,5))

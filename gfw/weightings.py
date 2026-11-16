@@ -49,16 +49,30 @@ def weights_pinv(L, rank_reduction=1, k=None):      # Projection weighting
     return np.einsum("gik,gjk->gij", Vk, Vk)
 
 
+def get_delta():
+    d = 0.5 # delta in intervall [0,1]   # 0,25 / 0,5 / 0,75
+    return d
+
 def combined_weights_exp(L, rank_reduction=1, k=None):      # Rechenlastige Interpolation bei vielen Quellen
+    #for i in range (L.shape[1]):
+    #    L[:,i] = L[:,i]/np.linalg.norm(L[:,i],2) 
+
+    
     green = weights_gamma(L)
     proj = weights_pinv(L, rank_reduction=1, k=None)
     green_genormt = green / np.linalg.norm(green, ord="fro", axis=(-1,-2),keepdims=True)
     proj_genormt = proj / np.linalg.norm(proj,ord="fro", axis=(-1,-2),keepdims=True)
-    delta = 0.5 # delta in intervall [0,1]   # 0,25 / 0,5 / 0,75  
+    delta = get_delta()
+    #print("green",np.average(green[:3]))
+    #print("proj",np.average(proj[:3]))
+    #print()
+    #print("green norm",np.average(green_genormt[:3]))
+    #print("proj norm",np.average(proj_genormt[:3])) 
     return (1.0-delta) * green_genormt + delta * proj_genormt
 
 # d = 0,75 ziemlich gut, am konstantesten 
 # only green auch gut aber regelmäßig große ausreißer, ist aber am genausten
+# ab n = 2 ist mean_loc_error = 30, viel besser wirds nicht, egal mit welchem weighting
 
 
 def get_alpha_scaled_by_svd(L):     # mit KI gemacht 
@@ -81,7 +95,7 @@ def get_alpha_scaled_by_svd(L):     # mit KI gemacht
 
 def combined_weights_cheap(L):     # mit KI gemacht
     # Push-Through-Identität aus PDF-Datei
-    # Lohnt sich rechentechnisch nur wenn Anzahl der Quellen >> Anzahl Sensoren, dann invertierbarkeit der Matrix schneller
+    # Lohnt sich rechentechnisch nur wenn Anzahl der Quellen >> Anzahl Sensoren, dann Invertierbarkeit der Matrix schneller
     alpha = get_alpha_scaled_by_svd(L) # [0,inf) Gewichtung 0: Proj , inf: Green
     N, num_cols = L.shape
     m = num_cols // 3

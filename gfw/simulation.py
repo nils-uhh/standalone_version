@@ -18,6 +18,13 @@ def add_noise(potential):       # to be edited
     #print()
     return noised_potential
 
+def get_snr():
+    
+    # to be created
+    # should get the signal to noise ratio 
+    
+    pass
+
 def find_target(potential):
     sigma = 0.001
     target = m.sqrt(len(potential)) * sigma
