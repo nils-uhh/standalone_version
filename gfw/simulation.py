@@ -7,26 +7,33 @@ def average_reference(potential):
     """Subtract the mean over sensors; the leadfields are average-referenced."""
     return potential - potential.mean(axis=-1, keepdims=True)
 
- 
-def add_noise(potential):       # to be edited 
+
+def get_snr():
+    snr = None # hier gewollten SNR-Wert einsetzen
+    return snr
+
+
+def get_sigma():
+    snr = get_snr()
+    # sigma = m.sqrt((mean(signal**2))/(10**(snr/10)))  # Formel für sigma based on SNR-Wert
+    # was genau ist signal? potential von def simulation?
+    # wie viele sensorwerte gibt es?
+    return sigma
+
+
+def add_noise(potential):       
     mittel = 0      # Mittelwert der Normalverteilung
-    sigma = 0.001       # Standardabweichung
-    # Herausfinden was gute Werte sind!
+    sigma = get_sigma()       # Standardabweichung
+    # noise jetzt basierend auf gewollten SNR-Wert dazuadddieren
+
     noise = np.random.normal(mittel , sigma, size=potential.shape)
     noised_potential = potential + noise
     #print(noised_potential)
     #print()
     return noised_potential
 
-def get_snr():
-    
-    # to be created
-    # should get the signal to noise ratio 
-    
-    pass
-
 def find_target(potential):
-    sigma = 0.001
+    sigma = get_sigma()
     target = m.sqrt(len(potential)) * sigma
     #print("Das target ist",target)
     #print()

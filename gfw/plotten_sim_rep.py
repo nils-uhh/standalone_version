@@ -1,6 +1,9 @@
 import matplotlib 
 import matplotlib.pyplot as plt
 import numpy as np
+import math
+from pathlib import Path
+
 
 # Erstelle einen Plot, wobei jedes Delta einen eigenen Graph hat.
 # jeder graph besteht aus einem SNR und entsprechendem mean_loc_error
@@ -9,34 +12,42 @@ import numpy as np
 # code hat mit delta = [0 , 1] irgendwie nicht funktioniert letztes mal  
 
 
-array1 = [1,2,3,4,5,6,7,] # muss dann später dynamisch aus Ergebnisse_sim_rep geholt werden
-array2 = [11,12,13,14,15,16]
+def get_max_min(array):
+    return max(array) , min(array)
+
+def get_average(array):   
+    return sum(array)/100 
 
 
-def get_average(npz):   
-    return sum[npz]/100 
-
-def get_max_min(npz):
-    return max(npz) , min(npz)
-
-
-
-
+snr_levels = [1,2,3,4]
+farben = ["blue","red","green","black"]
+n = 0
 
 # Plotten
+for i in [0.2 , 0.4 , 0.6 , 0.8]: # for i in verschiedene delta 
+    for j in [snr_levels]: # verschiedene SNR-Level
+        # Dateipfad finden:
+        hauptordner = Path(__file__).resolve().parent
+        pfad = (hauptordner / "Ergebnisse_sim_rep" / f"d = {i}" / "run_delta={i}_SNR={j}.npz") 
+        # entsprechende Datei laden:
+        with np.load(pfad) as archiv:
+            werte = archiv["daten"]
+        # Werte zum plotten bestimmen
+        average = get_average(werte)
+        max_min = get_max_min(werte)
 
-for i in 00: # for i in verschiedene delta 
-    snr_level = None # hier die verschiedenen getesteten snr_level eintragen 
-    x = [snr_level] 
-    y = get_average("run_delta:{delta}_SNR:{snr}.npz")  # so ungefähr vom vibe her 
-    plt.plot(x,y,color="")
 
+        x = j 
+        y =  average
+        plt.scatter(x,y,color=farben[n],label=f"delta = {i}")
+
+    n = n + 1 
+
+
+plt.xlim(0,40)
+plt.ylim(0,100)
 plt.ylabel("mean_loc_error in mm")
-plt.xlabel("SNR in db")
+plt.xlabel("SNR in dB")
 plt.title("Vergleich der Deltas")
 plt.legend()
-
-
-
-
 plt.show()

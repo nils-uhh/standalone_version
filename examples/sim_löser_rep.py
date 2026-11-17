@@ -19,6 +19,8 @@ import gfw
 from gfw.data import OUTPUT_DIR
 from gfw.plotting import plot_reconstruction
 from gfw.vtu_utils import save_points_to_vtu_file, save_surface_to_vtu_file
+import math
+
 
 k = 100 # wie viele durchgänge von simulationen 
 def main():
@@ -31,7 +33,7 @@ def main():
     smallest_3 = 500
     mean_error_sum = 0
     max_error_sum = 0
-    safe = np.array([])
+    safe = []
     
     for i in range(k):
     
@@ -48,9 +50,9 @@ def main():
         simulation = gfw.load_simulation_space()
         L = problem.leadfield
         W = gfw.WEIGHTINGS["combined_expensive"](L)     #       "greens_function": weights_gamma,
-                                                    #       "truncated_pinv": weights_pinv,
-                                                    #       "combined_expensive": combined_weights_exp,
-                                                    #       "combined_cheap": combined_weights_cheap,
+                                                        #       "truncated_pinv": weights_pinv,
+                                                        #       "combined_expensive": combined_weights_exp,
+                                                        #       "combined_cheap": combined_weights_cheap,
 
 
         d, indices, moments = gfw.simulate(simulation, n_sources=1, min_separation=30.0, seed=args.seed) # n = 1,2,3
@@ -82,23 +84,23 @@ def main():
         max_error_sum = max_error_sum + speicher[1]
 
 
-        # speichert den aktuellen durchlauf in datei zum plotten nachher
-        # ist es vlt sinnvoller in eine datei alle verschiedenen deltas zu speichern? 
+        # speichert den aktuellen durchlauf in datei zum plotten nachher 
 
         safe.append(speicher[0])
         print(i+1 , "ter Durchgang")
 
 
     # speichert Ergebnisse als npz 
-    delta =  gfw.get_delta()
-    snr = gfw.get_snr() # to be created in "simulation.py"
-    dateiname = f"run_delta:{delta}_SNR:{snr}.npz"
-
+    safe = np.array(safe)
+    delta =  gfw.weightings.get_delta()
+    wert = sum(safe)
+    snr = gfw.simulation.get_snr(wert) 
+    
     aktueller_ordner = Path(__file__).resolve().parent
     projekt_hauptordner = aktueller_ordner.parent
-    # für jedes delta ncohmal eigenen unterordner, dann ist einfacher
-    # darauf zuzugreifen für den plot und übersichtlicher
-    dateipfad = projekt_hauptordner / "Ergebnisse_sim_rep" / dateiname 
+
+    # speichere array als npz-datei 
+    dateipfad = projekt_hauptordner / "gfw" / "Ergebnisse_sim_rep" / f"d = {delta}" / f"run_delta={delta}_SNR={snr}.npz"
     np.savez(dateipfad, daten=safe)
 
 

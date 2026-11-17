@@ -50,7 +50,7 @@ def weights_pinv(L, rank_reduction=1, k=None):      # Projection weighting
 
 
 def get_delta():
-    d = 0.5 # delta in intervall [0,1]   # 0,25 / 0,5 / 0,75
+    d = 0.6 # delta in intervall [0,1]   
     return d
 
 def combined_weights_exp(L, rank_reduction=1, k=None):      # Rechenlastige Interpolation bei vielen Quellen
