@@ -4,6 +4,14 @@ import numpy as np
 import math
 from pathlib import Path
 
+"""
+Erstellt zu den simulierten Daten einen Plot, sodass schnell und übersichtlich verglichen werden kann.
+"""
+
+
+
+
+
 
 # Erstelle einen Plot, wobei jedes Delta einen eigenen Graph hat.
 # jeder graph besteht aus einem SNR und entsprechendem mean_loc_error
@@ -18,17 +26,19 @@ def get_max_min(array):
 def get_average(array):   
     return sum(array)/100 
 
-
-snr_levels = [1,2,3,4]
-farben = ["blue","red","green","black"]
+                       
+snr_levels = [1,2,3,4]  # hier die verschiedene SNR-Level eintragen
+farben = ["blue","red","green","black"]     # jedes Delta hat eigene Farbe zur Unterscheidung
+deltas = [0.2 , 0.4 , 0.6 , 0.8]
 n = 0
 
-# Plotten
-for i in [0.2 , 0.4 , 0.6 , 0.8]: # for i in verschiedene delta 
-    for j in [snr_levels]: # verschiedene SNR-Level
+# Plot vorbereiten und erstellen
+for i in range(len(deltas)): # for i in verschiedene delta 
+    punkte = []
+    for j in range(len(snr_levels)): # verschiedene SNR-Level
         # Dateipfad finden:
         hauptordner = Path(__file__).resolve().parent
-        pfad = (hauptordner / "Ergebnisse_sim_rep" / f"d = {i}" / "run_delta={i}_SNR={j}.npz") 
+        pfad = (hauptordner / "Ergebnisse_sim_rep" / f"d = {deltas[i]}" / f"run_delta={deltas[i]}_SNR={snr_levels[j]}.npz") 
         # entsprechende Datei laden:
         with np.load(pfad) as archiv:
             werte = archiv["daten"]
@@ -37,17 +47,32 @@ for i in [0.2 , 0.4 , 0.6 , 0.8]: # for i in verschiedene delta
         max_min = get_max_min(werte)
 
 
-        x = j 
+        x = snr_levels[j] 
         y =  average
-        plt.scatter(x,y,color=farben[n],label=f"delta = {i}")
 
+        if j == 0:  #   Jedes Delta eine eigene Farbe
+            lbl = f"delta = {deltas[i]}"
+        else:
+            lbl = None
+        punkte.append(y)
+        # Erstellung des Plots
+
+        plt.scatter(x,max_min[0],color=farben[n])
+        plt.scatter(x,max_min[1],color=farben[n])
+        plt.scatter(x,y,color=farben[n],label=lbl)
+
+    plt.plot(snr_levels,punkte, color=farben[n])
     n = n + 1 
 
 
-plt.xlim(0,40)
+# Plotten
+
+plt.xlim(0,30)  
+plt.xlabel("SNR in dB")   
+
 plt.ylim(0,100)
 plt.ylabel("mean_loc_error in mm")
-plt.xlabel("SNR in dB")
+
 plt.title("Vergleich der Deltas")
 plt.legend()
 plt.show()
