@@ -22,7 +22,7 @@ from gfw.vtu_utils import save_points_to_vtu_file, save_surface_to_vtu_file
 import math
 
 
-k = 1 # wie viele durchgänge von simulationen 
+k = 100 # wie viele durchgänge von simulationen 
 def main(delta,snr):    # delta und snr nur inputen, wenn alle delta und snr mit einem run durchsimulieren
     # Startwerte zur Abspeicherung der größten und kleinsten mean/max loc error
     biggest_1 = 0
