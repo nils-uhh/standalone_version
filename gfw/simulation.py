@@ -8,39 +8,25 @@ def average_reference(potential):
     return potential - potential.mean(axis=-1, keepdims=True)
 
 
-def get_snr():
-    snr = None # hier gewollten SNR-Wert einsetzen
+def get_snr(snr):
+    # snr = 10 # hier gewollten SNR-Wert einsetzen außer wenn sim_löser_rep_schleife läuft
     return snr
 
 
-def get_sigma():
-    snr = get_snr()
-    # sigma = m.sqrt((mean(signal**2))/(10**(snr/10)))  # Formel für sigma based on SNR-Wert
-    # was genau ist signal? potential von def simulation?
-    # wie viele sensorwerte gibt es?
-    return sigma
-
-
-def add_noise(potential):       
+def add_noise(potential, sigma):   
+    # Noise    
     mittel = 0      # Mittelwert der Normalverteilung
-    sigma = get_sigma()       # Standardabweichung
     # noise jetzt basierend auf gewollten SNR-Wert dazuadddieren
 
     noise = np.random.normal(mittel , sigma, size=potential.shape)
     noised_potential = potential + noise
-    #print(noised_potential)
-    #print()
+
     return noised_potential
 
-def find_target(potential):
-    sigma = get_sigma()
-    target = m.sqrt(len(potential)) * sigma
-    #print("Das target ist",target)
-    #print()
-    return target
 
 
-def simulate(sim, n_sources=1, orientation="normal", min_separation=0.0, moments=None, indices=None, seed=0):
+
+def simulate(sim, snr=None, n_sources=1, orientation="normal", min_separation=0.0, moments=None, indices=None, seed=0):  # snr nur als parameter zulassen, wenn sim_löser_rep_schleife läuft
     """Simulate the potential of `n_sources` dipoles of unit strength.
 
     sim            : Problem from load_simulation_space
@@ -68,7 +54,13 @@ def simulate(sim, n_sources=1, orientation="normal", min_separation=0.0, moments
     #    liegt in R^79                                 3x1    
     #print(potential)
     #print()
-    return add_noise(potential), indices, moments
+
+    snr_level = get_snr(snr)
+    länge = len(potential)
+    sigma = m.sqrt(((sum(potential**2))/länge)/(10**(snr_level/10)))  # Formel für sigma based on SNR-Wert
+    noised_potential = add_noise(potential,sigma)
+    target = m.sqrt(länge) * sigma          #  Target für Morozov
+    return noised_potential, indices, moments, target   
 
 
 def _draw_sources(rng, sim, n_sources, min_separation):

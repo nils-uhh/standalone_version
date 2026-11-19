@@ -50,10 +50,11 @@ def weights_pinv(L, rank_reduction=1, k=None):      # Projection weighting
 
 
 def get_delta():
-    d = 0.6 # delta in intervall [0,1]   
+    d = 0 # delta in intervall [0,1]   
     return d
 
-def combined_weights_exp(L, rank_reduction=1, k=None):      # Rechenlastige Interpolation bei vielen Quellen
+def combined_weights_exp(L, delta, rank_reduction=1, k=None):      # Rechenlastige Interpolation bei vielen Quellen
+    # delta nur gebraucht, wenn sim_löser_rep_schleife genutzt 
     #for i in range (L.shape[1]):
     #    L[:,i] = L[:,i]/np.linalg.norm(L[:,i],2) 
 
@@ -62,7 +63,7 @@ def combined_weights_exp(L, rank_reduction=1, k=None):      # Rechenlastige Inte
     proj = weights_pinv(L, rank_reduction=1, k=None)
     green_genormt = green / np.linalg.norm(green, ord="fro", axis=(-1,-2),keepdims=True)
     proj_genormt = proj / np.linalg.norm(proj,ord="fro", axis=(-1,-2),keepdims=True)
-    delta = get_delta()
+    # delta = get_delta()   nicht gebraucht, wenn sim_löser_rep_schleife genutzt wird. 
     #print("green",np.average(green[:3]))
     #print("proj",np.average(proj[:3]))
     #print()

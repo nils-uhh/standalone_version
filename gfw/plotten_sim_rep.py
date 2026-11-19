@@ -8,11 +8,6 @@ from pathlib import Path
 Erstellt zu den simulierten Daten einen Plot, sodass schnell und übersichtlich verglichen werden kann.
 """
 
-
-
-
-
-
 # Erstelle einen Plot, wobei jedes Delta einen eigenen Graph hat.
 # jeder graph besteht aus einem SNR und entsprechendem mean_loc_error
 # dadurch dann übersichtlich welches delta am besten ist
@@ -24,12 +19,12 @@ def get_max_min(array):
     return max(array) , min(array)
 
 def get_average(array):   
-    return sum(array)/100 
+    return sum(array)/len(array) 
 
                        
-snr_levels = [1,2,3,4]  # hier die verschiedene SNR-Level eintragen
-farben = ["blue","red","green","black"]     # jedes Delta hat eigene Farbe zur Unterscheidung
-deltas = [0.2 , 0.4 , 0.6 , 0.8]
+snr_levels = [5,10,15,20]  # hier die verschiedene SNR-Level eintragen
+farben = ["blue","red","green","black","yellow","purple"]     # jedes Delta hat eigene Farbe zur Unterscheidung
+deltas = [0 , 0.2 , 0.4 , 0.6 , 0.8 , 1]
 n = 0
 
 # Plot vorbereiten und erstellen

@@ -22,8 +22,8 @@ from gfw.vtu_utils import save_points_to_vtu_file, save_surface_to_vtu_file
 import math
 
 
-k = 100 # wie viele durchgänge von simulationen 
-def main():
+k = 10 # wie viele durchgänge von simulationen 
+def main():    
     # Startwerte zur Abspeicherung der größten und kleinsten mean/max loc error
     biggest_1 = 0
     biggest_2 = 0
@@ -55,8 +55,7 @@ def main():
                                                         #       "combined_cheap": combined_weights_cheap,
 
 
-        d, indices, moments = gfw.simulate(simulation, n_sources=1, min_separation=30.0, seed=args.seed) # n = 1,2,3
-        target = gfw.simulation.find_target(d)
+        d, indices, moments, target = gfw.simulate(simulation, n_sources=1, min_separation=30.0, seed=args.seed) # n = 1,2,3
         x,alpha = gfw.morozov(L, W, d, target)      
         true_positions = simulation.positions[indices]
         speicher = gfw.metrics.source_metrics_rep(x, problem.positions, true_positions)
@@ -93,8 +92,7 @@ def main():
     # speichert Ergebnisse als npz 
     safe = np.array(safe)
     delta =  gfw.weightings.get_delta()
-    wert = sum(safe)
-    snr = gfw.simulation.get_snr(wert) 
+    snr = gfw.simulation.get_snr() 
     
     aktueller_ordner = Path(__file__).resolve().parent
     projekt_hauptordner = aktueller_ordner.parent
@@ -110,5 +108,7 @@ def main():
     print("Durchschnittlicher max_loc_error ist ", round(max_error_sum/k,5))
 
 
+
+    
 if __name__ == "__main__":
     main()
