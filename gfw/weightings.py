@@ -69,7 +69,12 @@ def combined_weights_exp(L, delta, rank_reduction=1, k=None):      # Rechenlasti
     #print()
     #print("green norm",np.average(green_genormt[:3]))
     #print("proj norm",np.average(proj_genormt[:3])) 
-    return (1.0-delta) * green_genormt + delta * proj_genormt
+    if delta != 0 and delta != 1:
+        return (1.0-delta) * green_genormt + delta * proj_genormt
+    elif delta == 0:
+        return green
+    elif delta == 1:
+        return proj
 
 # d = 0,75 ziemlich gut, am konstantesten 
 # only green auch gut aber regelmäßig große ausreißer, ist aber am genausten

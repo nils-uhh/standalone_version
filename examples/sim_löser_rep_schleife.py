@@ -102,7 +102,7 @@ def main(delta,snr):    # delta und snr nur inputen, wenn alle delta und snr mit
     np.savez(dateipfad, daten=safe)
 
 
-deltas = [0 , 0.2 , 0.4 , 0.6 , 0.8 , 1]
+deltas = [0 , 1]
 snr = [5 , 10 , 15 , 20]
 
 
@@ -115,7 +115,7 @@ def rep():
     for i in range(len(deltas)):    
         for j in range(len(snr)):
             main(deltas[i],get_snr(j))
-        print(f"Fertig mit Delta {i}")    
+        print(f"Fertig mit Delta {deltas[i]}")    
 
 if __name__ == "__main__":
     rep()

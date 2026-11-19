@@ -23,7 +23,7 @@ def get_average(array):
 
                        
 snr_levels = [5,10,15,20]  # hier die verschiedene SNR-Level eintragen
-farben = ["blue","red","green","black","yellow","purple"]     # jedes Delta hat eigene Farbe zur Unterscheidung
+farben = ["green","red","blue","black","orange","purple"]     # jedes Delta hat eigene Farbe zur Unterscheidung
 deltas = [0 , 0.2 , 0.4 , 0.6 , 0.8 , 1]
 n = 0
 
@@ -46,7 +46,12 @@ for i in range(len(deltas)): # for i in verschiedene delta
         y =  average
 
         if j == 0:  #   Jedes Delta eine eigene Farbe
-            lbl = f"delta = {deltas[i]}"
+            if i == 0:
+                lbl = f"delta = {deltas[i]} = green"
+            elif i == 5:
+                lbl = f"delta = {deltas[i]} = proj"
+            else:
+                lbl = f"delta = {deltas[i]}"
         else:
             lbl = None
         punkte.append(y)
@@ -62,10 +67,10 @@ for i in range(len(deltas)): # for i in verschiedene delta
 
 # Plotten
 
-plt.xlim(0,30)  
+plt.xlim(4,21)  
 plt.xlabel("SNR in dB")   
 
-plt.ylim(0,100)
+plt.ylim(0,90)
 plt.ylabel("mean_loc_error in mm")
 
 plt.title("Vergleich der Deltas")
