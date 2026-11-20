@@ -22,8 +22,9 @@ from gfw.vtu_utils import save_points_to_vtu_file, save_surface_to_vtu_file
 import math
 
 
-k = 100 # wie viele durchgänge von simulationen 
-def main(delta,snr):    # delta und snr nur inputen, wenn alle delta und snr mit einem run durchsimulieren
+k = 10 # wie viele durchgänge von simulationen 
+def main(alpha,snr):    # delta und snr nur inputen, wenn alle delta und snr mit einem run durchsimulieren
+                        # alpha bei Nutzung von combined_cheap
     # Startwerte zur Abspeicherung der größten und kleinsten mean/max loc error
     biggest_1 = 0
     biggest_2 = 0
@@ -49,14 +50,14 @@ def main(delta,snr):    # delta und snr nur inputen, wenn alle delta und snr mit
         problem = gfw.load_problem()
         simulation = gfw.load_simulation_space()
         L = problem.leadfield
-        W = gfw.WEIGHTINGS["combined_expensive"](L,delta)     #       "greens_function": weights_gamma,
+        W = gfw.WEIGHTINGS["combined_cheap"](L,alpha)     #       "greens_function": weights_gamma,
                                                               #       "truncated_pinv": weights_pinv,
                                                               #       "combined_expensive": combined_weights_exp,
                                                               #       "combined_cheap": combined_weights_cheap,
 
 
         d, indices, moments, target = gfw.simulate(simulation, snr, n_sources=1, min_separation=30.0, seed=args.seed) # n = 1,2,3 
-        x,alpha = gfw.morozov(L, W, d, target)      
+        x,alpha1 = gfw.morozov(L, W, d, target)      
         true_positions = simulation.positions[indices]
         speicher = gfw.metrics.source_metrics_rep(x, problem.positions, true_positions)
 
@@ -98,24 +99,28 @@ def main(delta,snr):    # delta und snr nur inputen, wenn alle delta und snr mit
     projekt_hauptordner = aktueller_ordner.parent
 
     # speichere array als npz-datei 
-    dateipfad = projekt_hauptordner / "gfw" / "Ergebnisse_sim_rep" / f"d = {delta}" / f"run_delta={delta}_SNR={snr}.npz"
+    Ordner = projekt_hauptordner / "gfw" / "Ergebnisse_sim_rep" / f"a = {alpha}"
+    Ordner.mkdir(parents=True, exist_ok=True)
+
+    dateipfad = Ordner / f"run_alpha={alpha}_SNR={snr}.npz"    # alpha oder delta, je nach weighting
     np.savez(dateipfad, daten=safe)
 
 
 deltas = [0 , 1]
 snr = [5 , 10 , 15 , 20]
+alpha = [ 1e6] # 1e-05 fertig
 
 
 def get_snr(zahl):
     return snr[zahl]
 
 
-# Schleife für alle Deltas und SNR_level
+# Schleife für alle Deltas/Alphas und SNR_level
 def rep():
-    for i in range(len(deltas)):    
+    for i in range(len(alpha)):    
         for j in range(len(snr)):
-            main(deltas[i],get_snr(j))
-        print(f"Fertig mit Delta {deltas[i]}")    
+            main(alpha[i],get_snr(j))
+        print(f"Fertig mit Alpha {alpha[i]}")    
 
 if __name__ == "__main__":
     rep()

@@ -12,6 +12,7 @@ Erstellt zu den simulierten Daten einen Plot, sodass schnell und übersichtlich 
 # jeder graph besteht aus einem SNR und entsprechendem mean_loc_error
 # dadurch dann übersichtlich welches delta am besten ist
 # delta = [0.2 , 0.4 , 0.6 , 0.8]??
+# Alpha unbekannt was gute Werte sind, da in [0,inf) liegen kann
 # code hat mit delta = [0 , 1] irgendwie nicht funktioniert letztes mal  
 
 
@@ -25,15 +26,16 @@ def get_average(array):
 snr_levels = [5,10,15,20]  # hier die verschiedene SNR-Level eintragen
 farben = ["green","red","blue","black","orange","purple"]     # jedes Delta hat eigene Farbe zur Unterscheidung
 deltas = [0 , 0.2 , 0.4 , 0.6 , 0.8 , 1]
+alpha = alpha = [0.01 , 1e-05 , 1 , 1000.0 , 1000000.0]
 n = 0
 
 # Plot vorbereiten und erstellen
-for i in range(len(deltas)): # for i in verschiedene delta 
+for i in range(len(alpha)): # for i in verschiedene delta 
     punkte = []
     for j in range(len(snr_levels)): # verschiedene SNR-Level
         # Dateipfad finden:
         hauptordner = Path(__file__).resolve().parent
-        pfad = (hauptordner / "Ergebnisse_sim_rep" / f"d = {deltas[i]}" / f"run_delta={deltas[i]}_SNR={snr_levels[j]}.npz") 
+        pfad = (hauptordner / "Ergebnisse_sim_rep" / f"a = {alpha[i]}" / f"run_alpha={alpha[i]}_SNR={snr_levels[j]}.npz") # je nachdem ob alpha oder delta daten geplottet werden soll
         # entsprechende Datei laden:
         with np.load(pfad) as archiv:
             werte = archiv["daten"]
@@ -46,12 +48,13 @@ for i in range(len(deltas)): # for i in verschiedene delta
         y =  average
 
         if j == 0:  #   Jedes Delta eine eigene Farbe
-            if i == 0:
-                lbl = f"delta = {deltas[i]} = green"
-            elif i == 5:
-                lbl = f"delta = {deltas[i]} = proj"
-            else:
-                lbl = f"delta = {deltas[i]}"
+            lbl = f"alpha = {alpha[i]} = {farben[n]}"
+           # if i == 0:
+            #    lbl = f"delta = {deltas[i]} = green"
+           # elif i == 5:
+           #     lbl = f"delta = {deltas[i]} = proj"
+            #else:
+             #   lbl = f"delta = {deltas[i]}"
         else:
             lbl = None
         punkte.append(y)
@@ -70,9 +73,9 @@ for i in range(len(deltas)): # for i in verschiedene delta
 plt.xlim(4,21)  
 plt.xlabel("SNR in dB")   
 
-plt.ylim(0,90)
+plt.ylim(0,60)
 plt.ylabel("mean_loc_error in mm")
 
-plt.title("Vergleich der Deltas")
+plt.title("Vergleich der Alphas")
 plt.legend()
 plt.show()

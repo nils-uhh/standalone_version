@@ -99,10 +99,10 @@ def get_alpha_scaled_by_svd(L):     # mit KI gemacht
     return alpha
 
 
-def combined_weights_cheap(L):     # mit KI gemacht
+def combined_weights_cheap(L,alpha):     # mit KI gemacht
     # Push-Through-Identität aus PDF-Datei
     # Lohnt sich rechentechnisch nur wenn Anzahl der Quellen >> Anzahl Sensoren, dann Invertierbarkeit der Matrix schneller
-    alpha = get_alpha_scaled_by_svd(L) # [0,inf) Gewichtung 0: Proj , inf: Green
+    # alpha = get_alpha_scaled_by_svd(L) # [0,inf) Gewichtung 0: Proj , inf: Green
     N, num_cols = L.shape
     m = num_cols // 3
         
